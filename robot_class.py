@@ -33,6 +33,12 @@ class robot:
         self.turn_noise = np.random.randn()
         self.sense_noise = np.random.randn()
         
+    def __repr__(self):
+        return "x := {:.3f}\ny := {:.3f}\norientation := {:.3f}".format(
+                                                   self.x, 
+                                                   self.y, 
+                                                   self.orientation)
+        
     def set_pos(self, x, y, orientation):
         if x > self.x - self.world.size:
             raise ValueError("Invalid Input")
