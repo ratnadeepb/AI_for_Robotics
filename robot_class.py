@@ -9,21 +9,34 @@ Created on Wed May 17 20:23:36 2017
 
 import numpy as np
 
+class world:
+    def __init__(self, size, landmarks):
+        self.size = size
+        try:
+            self.landmarks = np.array(landmarks)
+        except:
+            raise ValueError("Invalid Input")
+        
+        # Landmarks should always have 2 rows (x, y)
+        if self.landmarks.shape[1] != 2:
+            raise ValueError("Incorrect number of coordinates!")
+
 class robot:
-    def __init__(self, world_size):
-        self.size = world_size
-        self.x = np.random.rand() * self.size
-        self.y = np.random.rand() * self.size
+    def __init__(self, world_size, landmarks):
+        self.world = world(world_size, landmarks)
+        self.x = np.random.rand() * self.world.size
+        self.y = np.random.rand() * self.world.size
         self.orientation = np.random.rand() * 2 * np.pi
         self.v = np.array([self.x, self.y])
+        self.Z = np.zeros((self.world.landmarks.shape[0], 2))
         self.forward_noise = np.random.randn()
         self.turn_noise = np.random.randn()
         self.sense_noise = np.random.randn()
         
     def set_pos(self, x, y, orientation):
-        if x > self.x - self.size:
+        if x > self.x - self.world.size:
             raise ValueError("Invalid Input")
-        if y > self.y - self.size:
+        if y > self.y - self.world.size:
             raise ValueError("Invalid Input")
             
         self.x = x
@@ -73,10 +86,17 @@ class robot:
         self.x = x1
         self.y = y1
     
-    def set_sense_noise(self, noise):
-        self.sense_noise = noise
+    def set_noise(self, forward_noise, turn_noise, sense_noise):
+        self.forward_noise = forward_noise
+        self.turn_noise = turn_noise
+        self.sense_noise = sense_noise
         
     def sense(self):
-        self.z = np.zeros((2, 1))
-        self.z[0, 0] = self.sense_noise * np.random.randn() + np.round(self.x)
-        self.z[1, 0] = self.sense_noise * np.random.randn() + np.round(self.y)
+        for i in range(self.Z.shape[0]):
+            x = np.sqrt((self.world.landmarks[i, 0] - self.x) ** 2)
+            y = np.sqrt((self.world.landmarks[i, 1] - self.y) ** 2)
+            self.Z[i, :] = [x, y]
+            self.Z[i, 0] = self.sense_noise * np.random.randn() + \
+                            np.round(x)
+            self.Z[i, 1] = self.sense_noise * np.random.randn() + \
+                            np.round(y)
