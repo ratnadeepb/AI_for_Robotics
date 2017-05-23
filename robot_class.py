@@ -40,9 +40,9 @@ class robot:
                                                    self.orientation)
         
     def set_pos(self, x, y, orientation):
-        if x > self.x - self.world.size:
+        if x > self.world.size or x < 0:
             raise ValueError("Invalid Input")
-        if y > self.y - self.world.size:
+        if y > self.world.size or y < 0:
             raise ValueError("Invalid Input")
             
         self.x = x
