@@ -63,16 +63,16 @@ class robot:
         self.orientation %= (2 * np.pi)
         
         turn += self.turn_noise
-        R = np.array([[np.cos(turn), -np.sin(turn)],
-                       [np.sin(turn), np.cos(turn)],
-                       [0, 0]])
+        R = np.array([[np.cos(turn), -np.sin(turn), 0],
+                       [np.sin(turn), np.cos(turn), 0],
+                       [0, 0, 1], [0, 0, 0]])
         
         forward += self.forward_noise
-        t = np.array([forward, 0, 1]).reshape(3, 1)
+        t = np.array([forward, 0, 0, 1]).reshape(4, 1)
 
         T = np.column_stack((R, t))
         
-        v = np.array([self.x, self.y, 1]).reshape(3, 1)
+        v = np.array([self.x, self.y, 0, 1]).reshape(4, 1)
         temp = T @ v
         
         if temp[0,0] > 100:
