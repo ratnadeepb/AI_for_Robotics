@@ -28,7 +28,7 @@ class robot:
         self.y = np.random.rand() * self.world.size
         self.orientation = np.random.rand() * 2 * np.pi
         self.v = np.array([self.x, self.y])
-        self.Z = np.zeros((self.world.landmarks.shape[0], 2))
+        self.Z = np.zeros((self.world.landmarks.shape[0], 1))
         self.forward_noise = np.random.randn()
         self.turn_noise = np.random.randn()
         self.sense_noise = np.random.randn()
@@ -99,10 +99,7 @@ class robot:
         
     def sense(self):
         for i in range(self.Z.shape[0]):
-            x = np.sqrt((self.world.landmarks[i, 0] - self.x) ** 2)
-            y = np.sqrt((self.world.landmarks[i, 1] - self.y) ** 2)
-            self.Z[i, :] = [x, y]
-            self.Z[i, 0] = self.sense_noise * np.random.randn() + \
-                            np.round(x)
-            self.Z[i, 1] = self.sense_noise * np.random.randn() + \
-                            np.round(y)
+            z = np.abs((self.world.landmarks[i, 0] - self.x) ** 2) + \
+                np.abs((self.world.landmarks[i, 1] - self.y) ** 2)
+            z = np.round(np.sqrt(z)) + self.sense_noise * np.random.randn()
+            self.Z[i] = z
