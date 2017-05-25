@@ -20,29 +20,53 @@ class world:
         # Landmarks should always have 2 rows (x, y)
         if self.landmarks.shape[1] != 2:
             raise ValueError("Incorrect number of coordinates!")
+    
+    def __repr__(self):
+        return "[{}, {}]".format(self.size, self.landmarks)
 
 class robot:
-    def __init__(self, world_size, landmarks):
-        self.world = world(world_size, landmarks)
-        self.x = np.random.rand() * self.world.size
-        self.y = np.random.rand() * self.world.size
+    def __init__(self, **kwargs):
+        if len(kwargs) < 1:
+            raise ValueError("At least 1 named argument required")
+        if len(kwargs) > 2:
+            raise ValueError("Only 2 named arguments supported")
+
+        if len(kwargs) == 2:
+            try:
+                # Create my_world
+                self.my_world = world(kwargs['world_size'], 
+                                   kwargs['landmarks'])
+            except:
+                raise ValueError("Invalid Inputs")
+        
+        elif len(kwargs) == 1:
+            try:
+                # Use an existing world
+                self.my_world = kwargs['world']
+            except NameError:
+                raise NameError("Invalid world name")
+            except ValueError:
+                raise ValueError("Invalid world value")
+        
+        self.x = np.random.rand() * self.my_world.size
+        self.y = np.random.rand() * self.my_world.size
+        self.Z = np.zeros((self.my_world.landmarks.shape[0], 1))            
+
         self.orientation = np.random.rand() * 2 * np.pi
         self.v = np.array([self.x, self.y])
-        self.Z = np.zeros((self.world.landmarks.shape[0], 1))
+
         self.forward_noise = np.random.randn()
         self.turn_noise = np.random.randn()
         self.sense_noise = np.random.randn()
         
     def __repr__(self):
-        return "x := {:.3f}\ny := {:.3f}\norientation := {:.3f}".format(
-                                                   self.x, 
-                                                   self.y, 
-                                                   self.orientation)
+        return "{:.3f}\n{:.3f}\n{:.3f}".format(self.x, self.y, 
+                                                self.orientation)
         
     def set_pos(self, x, y, orientation):
-        if x > self.world.size or x < 0:
+        if x > self.my_world.size or x < 0:
             raise ValueError("Invalid Input")
-        if y > self.world.size or y < 0:
+        if y > self.my_world.size or y < 0:
             raise ValueError("Invalid Input")
             
         self.x = x
@@ -99,7 +123,7 @@ class robot:
         
     def sense(self):
         for i in range(self.Z.shape[0]):
-            z = np.abs((self.world.landmarks[i, 0] - self.x) ** 2) + \
-                np.abs((self.world.landmarks[i, 1] - self.y) ** 2)
+            z = np.abs((self.my_world.landmarks[i, 0] - self.x) ** 2) + \
+                np.abs((self.my_world.landmarks[i, 1] - self.y) ** 2)
             z = np.round(np.sqrt(z)) + self.sense_noise * np.random.randn()
             self.Z[i] = z
