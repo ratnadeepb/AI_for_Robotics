@@ -55,9 +55,9 @@ class robot:
         self.orientation = np.random.rand() * 2 * np.pi
         self.v = np.array([self.x, self.y])
 
-        self.forward_noise = np.random.randn()
-        self.turn_noise = np.random.randn()
-        self.sense_noise = np.random.randn()
+        self.forward_noise = np.random.randint(1, 10) * np.random.randn()
+        self.turn_noise = np.random.randint(1, 10) * np.random.randn()
+        self.sense_noise = np.random.randint(1, 10) * np.random.randn() 
         
     def __repr__(self):
         return "{:.3f}\n{:.3f}\n{:.3f}".format(self.x, self.y, 
