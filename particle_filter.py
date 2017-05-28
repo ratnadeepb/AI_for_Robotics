@@ -22,17 +22,17 @@ class particle_filter:
         self.my_robot = my_robot
         self.my_world = my_world
         
-        # Randomly generate particles
-        for i in range(no_of_particles):
-            self.particles.append(robot(world=self.my_world))
-        self.particles = np.array(self.particles)
-        
         # Set noise same as original robot
         f = self.my_robot.forward_noise
         t = self.my_robot.turn_noise
         s = self.my_robot.sense_noise
+        
+        # Randomly generate particles
         for i in range(no_of_particles):
-            self.particles[i].set_noise(f, t, s)
+            r = robot(world=self.my_world)
+            r.set_noise(f, t, s)
+            self.particles.append(r)
+        self.particles = np.array(self.particles)
     
     def move_particles(self, turn, distance):
         self.my_robot.move(turn, distance)
