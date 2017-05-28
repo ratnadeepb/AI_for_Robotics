@@ -54,10 +54,10 @@ class robot:
 
         self.orientation = np.random.rand() * 2 * np.pi
         self.v = np.array([self.x, self.y])
-
-        self.forward_noise = np.random.randint(1, 10) * np.random.randn()
-        self.turn_noise = np.random.randint(1, 10) * np.random.randn()
-        self.sense_noise = np.random.randint(1, 10) * np.random.randn() 
+        
+        self.forward_noise = np.random.randint(1, 10) + np.random.rand()
+        self.turn_noise = np.random.randint(1, 10) + np.random.rand()
+        self.sense_noise = np.random.randint(1, 10) + np.random.rand()
         
     def __repr__(self):
         return "{:.3f}\n{:.3f}\n{:.3f}".format(self.x, self.y, 
@@ -117,6 +117,19 @@ class robot:
         self.y = y1
     
     def set_noise(self, forward_noise, turn_noise, sense_noise):
+        if forward_noise < 0:
+            forward_noise = -forward_noise
+        elif forward_noise > 0 and forward_noise < 0.5:
+            forward_noise += 1
+        if turn_noise < 0:
+            turn_noise = -turn_noise
+        elif turn_noise > 0 and turn_noise < 0.5:
+            turn_noise += 1
+        if sense_noise < 0:
+            sense_noise = -sense_noise
+        elif sense_noise > 0 and sense_noise < 0.5:
+            sense_noise += 1    
+        
         self.forward_noise = forward_noise
         self.turn_noise = turn_noise
         self.sense_noise = sense_noise
