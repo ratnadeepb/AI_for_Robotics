@@ -42,3 +42,43 @@ class particle_filter:
             # No mathematical analysis behind it
             # Apart from a bit of intution from linear algebra
             self.weights[i] = la.norm(np.array(w))
+        
+    def select_particles(self):
+        new_particles = []
+        index = np.random.randint(0, self.weights.shape[0])
+        m = 2 * self.weights.max()
+        beta = 0
+        for i in range(self.particles.shape[0]):
+            beta += np.random.uniform(0, m)
+            while beta > self.weights[index]:
+                beta = beta - self.weights[index]
+                if index == self.weights.shape[0] - 1:
+                    index = 0
+                else:
+                    index += 1
+            new_particles.append(self.particles[index])
+        self.particles = np.array(new_particles)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
